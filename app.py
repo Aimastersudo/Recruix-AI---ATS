@@ -1,36 +1,46 @@
 import streamlit as st
 import pandas as pd
+import time
+import random
 
 # Page Configuration
-st.set_page_config(page_title="Recruix AI - ATS", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="Recruix AI - ATS Platform", page_icon="⚡", layout="wide")
+
+# Custom CSS for better UI
+st.markdown("""
+    <style>
+    .big-font { font-size: 24px !important; font-weight: bold; color: #1E3A8A; }
+    .score-high { color: #16A34A; font-weight: bold; font-size: 28px; }
+    .score-med { color: #D97706; font-weight: bold; font-size: 28px; }
+    </style>
+""", unsafe_allow_html=True)
 
 # Sidebar Navigation
 st.sidebar.title("⚡ Recruix AI")
 st.sidebar.markdown("---")
 menu = st.sidebar.radio(
     "Navigation", 
-    ["Dashboard", "AI Candidate Matching", "GCC Visa & Quotas", "Approvals"]
+    ["Dashboard", "AI CV Screening", "GCC Visa & Quotas"]
 )
 
+# ---------------------------------------------------------
+# PAGE 1: DASHBOARD
+# ---------------------------------------------------------
 if menu == "Dashboard":
     st.title("Recruitment Overview")
-    st.markdown("Al-Powered Talent Acquisition, Born in GCC")
+    st.markdown("The Only GCC-Native, AI-First ATS Platform")
     
-    # Key Metrics (Top row)
+    # Key Metrics
     col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric(label="Active Jobs", value="12", delta="+2 this week")
-    with col2:
-        st.metric(label="Candidates Managed", value="1,402", delta="+120 this week")
-    with col3:
-        st.metric(label="Visa Quota Alerts", value="3 Expiring", delta="Critical", delta_color="inverse")
+    col1.metric(label="Active Jobs", value="12", delta="+2 this week")
+    col2.metric(label="Candidates Managed", value="1,402", delta="+120 this week")
+    col3.metric(label="Visa Quota Alerts", value="3 Expiring", delta="- Critical", delta_color="inverse")
 
     st.markdown("---")
 
     # AI Auto-Ranking Table
     st.subheader("Top AI-Ranked Candidates")
     
-    # Mock Data for Candidates
     data = {
         "Candidate Name": ["Ahmed Hassan", "Sarah Malik", "John Doe", "Fatima Al Fasi", "Tariq Ali"],
         "Applied Role": ["Procurement Executive", "HR Manager", "Software Engineer", "Marketing Lead", "Finance Officer"],
@@ -39,41 +49,95 @@ if menu == "Dashboard":
     }
     df = pd.DataFrame(data)
     
-    # Formatting the table inside Streamlit
+    # Render table with color gradients for the score
     st.dataframe(
         df.style.background_gradient(subset=['AI Match Score'], cmap='Greens'),
         use_container_width=True,
         hide_index=True
     )
 
+# ---------------------------------------------------------
+# PAGE 2: AI CV SCREENING (Smart Parsing & Matching)
+# ---------------------------------------------------------
+elif menu == "AI CV Screening":
+    st.title("🧠 AI Candidate Screening Simulator")
+    st.markdown("Test the **Smart Parsing** and **Semantic Matching** capabilities.")
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("1. Job Requirements")
+        job_req = st.text_area(
+            "Enter Target Skills & Requirements:",
+            value="Talent Management, Payroll, UAE Labor Law, Employee Relations",
+            height=150
+        )
+        
+    with col2:
+        st.subheader("2. Candidate CV Content")
+        cv_content = st.text_area(
+            "Paste Candidate's CV Text here:",
+            value="8 years of Human Resources Administration. Handled Compensation and Benefits management. Expert in Dubai Labor Law compliance and full-cycle Recruiting.",
+            height=150
+        )
+
+    if st.button("🚀 Run AI Analysis", type="primary"):
+        with st.spinner('Recruix AI Brain is processing...'):
+            # Simulate processing time
+            time.sleep(2)
+            
+            st.markdown("---")
+            st.subheader("📊 AI Analysis Results")
+            
+            res_col1, res_col2, res_col3 = st.columns([1.5, 2, 1])
+            
+            with res_col1:
+                st.markdown("**🔍 Smart Parsing (Extracted from CV)**")
+                st.success("✓ HR Administration")
+                st.success("✓ Compensation & Benefits")
+                st.success("✓ Dubai Labor Law")
+                st.success("✓ Recruiting")
+                
+            with res_col2:
+                st.markdown("**🧠 Semantic Matching Engine**")
+                st.info("🔄 'HR Administration' ➔ Matches 'Talent Management'")
+                st.info("🔄 'Compensation & Benefits' ➔ Matches 'Payroll'")
+                st.info("🔄 'Dubai Labor Law' ➔ Matches 'UAE Labor Law'")
+                st.info("🔄 'Recruiting' ➔ Matches 'Employee Relations'")
+                
+            with res_col3:
+                st.markdown("**🎯 AI Match Score**")
+                # Calculate a mock score based on text length for simulation
+                score = random.randint(88, 98)
+                st.markdown(f"<div class='score-high'>{score}% Match</div>", unsafe_allow_html=True)
+                st.caption("0% Algorithmic Bias")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                if score >= 90:
+                    st.button("✅ Auto-Schedule Interview", use_container_width=True)
+                else:
+                    st.button("👀 Review Manually", use_container_width=True)
+
+# ---------------------------------------------------------
+# PAGE 3: GCC VISA & QUOTAS
+# ---------------------------------------------------------
 elif menu == "GCC Visa & Quotas":
-    st.title("GCC Visa & Compliance Management")
-    st.warning("⚠️ 3 Employee Visas expiring within the next 30 days.")
+    st.title("🏢 GCC Compliance & Visa Management")
+    st.markdown("Native support for Multi-Entity Hierarchy and Saudization/Emiratization.")
     
-    st.subheader("Emiratization / Saudization Status")
-    st.progress(65)
-    st.caption("Current Quota Fulfillment: 65% (Target: 70%)")
+    st.warning("⚠️ 3 Employee Visas expiring within the next 30 days. Action Required!")
     
-    # Mock Visa Data
+    st.subheader("Emiratization Status")
+    st.progress(0.65)
+    st.caption("Current Quota Fulfillment: 65% (Target: 70%) - Group Company Level")
+    
+    st.markdown("---")
+    st.subheader("Expiring Visas Tracking")
+    
     visa_data = {
-        "Employee": ["Mohammed Khan", "Arun Silva", "Jane Smith"],
-        "Entity": ["Pioneer Cement Industries", "Group Company A", "Business Unit 2"],
-        "Expiry Date": ["2026-05-15", "2026-05-20", "2026-06-02"],
-        "Status": ["Critical", "Pending Renewal", "Valid"]
+        "Employee Name": ["Mohammed Khan", "Arun Silva", "Jane Smith", "Ali Riaz"],
+        "Entity / Dept": ["Pioneer Cement / HR", "Group A / Procurement", "BU 2 / Marketing", "Pioneer Cement / IT"],
+        "Visa Expiry Date": ["2026-05-15", "2026-05-20", "2026-06-02", "2026-11-10"],
+        "Status": ["🔴 Critical", "🔴 Pending Renewal", "🟢 Valid", "🟢 Valid"]
     }
     st.table(pd.DataFrame(visa_data))
-
-elif menu == "AI Candidate Matching":
-    st.title("Smart Parsing & Semantic Matching")
-    st.info("Upload candidate resumes (PDF/DOCX) to automatically extract data and rank them against active jobs.")
-    
-    uploaded_file = st.file_uploader("Upload Resume", type=["pdf", "docx"])
-    
-    if uploaded_file is not None:
-        st.success(f"Successfully processed {uploaded_file.name} using Recruix AI Brain!")
-        st.write("Extracted Skills: **Supply Chain, Negotiation, SAP, Logistics**")
-        st.metric(label="Match to Procurement Executive Role", value="96%")
-
-elif menu == "Approvals":
-    st.title("Workflow Engine")
-    st.write("Pending Approvals from Hiring Managers will appear here.")
